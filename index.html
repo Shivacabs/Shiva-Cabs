@@ -218,22 +218,8 @@ function selectService(service) {
     document.getElementById("service").value = service;
     document.getElementById("bookingForm").scrollIntoView({behavior: "smooth"});
 }
-</script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAk2-r_Ph7md6UnlF9eQ_FQJ56m06HeH9Q",
-  authDomain: "shiva-cabs-67495.firebaseapp.com",
-  projectId: "shiva-cabs-67495"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-document.getElementById("bookingForm").addEventListener("submit", async function(e) {
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     const service = document.getElementById("service").value;
@@ -243,21 +229,12 @@ document.getElementById("bookingForm").addEventListener("submit", async function
     const drop = document.getElementById("drop").value;
     const dateTime = document.getElementById("dateTime").value;
 
-    try {
-        await addDoc(collection(db, "bookings"), {
-            service, name, phone, pickup, drop, dateTime,
-            created: new Date()
-        });
+    const message = `New Booking:%0AService: ${service}%0AName: ${name}%0APhone: ${phone}%0APickup: ${pickup}%0ADrop: ${drop}%0ADate & Time: ${dateTime}`;
 
-        const message = `New Booking:%0AService: ${service}%0AName: ${name}%0APhone: ${phone}%0APickup: ${pickup}%0ADrop: ${drop}%0ADate & Time: ${dateTime}`;
-        window.open(`https://wa.me/918618182400?text=${message}`, "_blank");
+    window.open(`https://wa.me/918618182400?text=${message}`, "_blank");
 
-        alert("Booking Submitted Successfully!");
-        document.getElementById("bookingForm").reset();
-    } catch (error) {
-        alert("Error submitting booking. Check Firestore rules.");
-        console.error(error);
-    }
+    alert("Booking Sent to WhatsApp Successfully!");
+    document.getElementById("bookingForm").reset();
 });
 </script>
 
