@@ -26,7 +26,7 @@ header h1 { color: #ffc107; }
 
 .hero {
     background: url('https://images.unsplash.com/photo-1502877338535-766e1452684a') center/cover;
-    height: 90vh;
+    height: 85vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -37,7 +37,7 @@ header h1 { color: #ffc107; }
 .hero h2 {
     background: rgba(0,0,0,0.7);
     padding: 20px;
-    font-size: 40px;
+    font-size: 38px;
 }
 
 .section {
@@ -45,7 +45,7 @@ header h1 { color: #ffc107; }
     text-align: center;
 }
 
-.pricing, .services {
+.services, .pricing {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -58,14 +58,15 @@ header h1 { color: #ffc107; }
     width: 260px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 .card:hover {
     transform: scale(1.05);
 }
 
-form input, form textarea {
+form input, form textarea, form select {
     width: 90%;
     padding: 10px;
     margin: 10px 0;
@@ -80,10 +81,6 @@ button {
 
 button:hover {
     background: #e0a800;
-}
-
-.contact-buttons {
-    margin-top: 20px;
 }
 
 .contact-buttons a {
@@ -126,10 +123,10 @@ footer {
 <section class="section">
 <h2>Our Services</h2>
 <div class="services">
-<div class="card">🚕 Local Trips</div>
-<div class="card">✈️ Airport Pickup & Drop</div>
-<div class="card">🛣️ Outstation Trips</div>
-<div class="card">🕒 24/7 Service</div>
+<div class="card" onclick="selectService('Local')">🚕 Local Trips</div>
+<div class="card" onclick="selectService('Airport')">✈️ Airport Pickup & Drop</div>
+<div class="card" onclick="selectService('Outstation')">🛣️ Outstation Trips</div>
+<div class="card" onclick="selectService('Tempo Traveller')">🚌 Tempo Traveller</div>
 </div>
 </section>
 
@@ -138,7 +135,7 @@ footer {
 <div class="pricing">
 
 <div class="card">
-<h3>🚕 Local - Sedan</h3>
+<h3>Local - Sedan</h3>
 4hrs - 40km : ₹1000<br>
 8hrs - 80km : ₹2000<br>
 Extra Hour : ₹150<br>
@@ -146,38 +143,38 @@ Extra KM : ₹15/km
 </div>
 
 <div class="card">
-<h3>🚐 Local - Innova</h3>
+<h3>Local - Innova</h3>
 8hrs : ₹3000<br>
 Extra KM : ₹20/km<br>
 Extra Hour : ₹250
 </div>
 
 <div class="card">
-<h3>🛣️ Outstation - Sedan</h3>
+<h3>Outstation - Sedan</h3>
 ₹12/km + ₹400 Driver Bata<br>
 7AM - 9PM<br>
 Toll & Parking Extra
 </div>
 
 <div class="card">
-<h3>🚘 Innova / Crysta</h3>
+<h3>Innova / Crysta</h3>
 ₹19/km + ₹400 Driver Bata
 </div>
 
 <div class="card">
-<h3>🚗 Hycross</h3>
+<h3>Hycross</h3>
 ₹20/km + ₹400 Driver Bata
 </div>
 
 <div class="card">
-<h3>🚌 Tempo Traveller</h3>
+<h3>Tempo Traveller</h3>
 8hrs - 80km : ₹4500<br>
 Extra KM : ₹22/km<br>
 Extra Hour : ₹300
 </div>
 
 <div class="card">
-<h3>✈️ Airport</h3>
+<h3>Airport</h3>
 Pickup & Drop Available<br>
 Contact for Booking
 </div>
@@ -189,6 +186,14 @@ Contact for Booking
 <h2>Book Your Ride</h2>
 
 <form id="bookingForm">
+<select id="service" required>
+<option value="">Select Service</option>
+<option value="Local">Local</option>
+<option value="Airport">Airport</option>
+<option value="Outstation">Outstation</option>
+<option value="Tempo Traveller">Tempo Traveller</option>
+</select><br>
+
 <input type="text" id="name" placeholder="Your Name" required><br>
 <input type="tel" id="phone" placeholder="Phone Number" required><br>
 <input type="text" id="pickup" placeholder="Pickup Location" required><br>
@@ -208,6 +213,13 @@ Contact for Booking
 © 2026 Shiva Cabs Bengaluru. All Rights Reserved.
 </footer>
 
+<script>
+function selectService(service) {
+    document.getElementById("service").value = service;
+    document.getElementById("bookingForm").scrollIntoView({behavior: "smooth"});
+}
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -215,10 +227,7 @@ import { getFirestore, collection, addDoc } from "https://www.gstatic.com/fireba
 const firebaseConfig = {
   apiKey: "AIzaSyAk2-r_Ph7md6UnlF9eQ_FQJ56m06HeH9Q",
   authDomain: "shiva-cabs-67495.firebaseapp.com",
-  projectId: "shiva-cabs-67495",
-  storageBucket: "shiva-cabs-67495.firebasestorage.app",
-  messagingSenderId: "575273167097",
-  appId: "1:575273167097:web:c2f53d5822598a4a535a28"
+  projectId: "shiva-cabs-67495"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -227,21 +236,28 @@ const db = getFirestore(app);
 document.getElementById("bookingForm").addEventListener("submit", async function(e) {
     e.preventDefault();
 
+    const service = document.getElementById("service").value;
     const name = document.getElementById("name").value;
     const phone = document.getElementById("phone").value;
     const pickup = document.getElementById("pickup").value;
     const drop = document.getElementById("drop").value;
     const dateTime = document.getElementById("dateTime").value;
 
-    await addDoc(collection(db, "bookings"), {
-        name, phone, pickup, drop, dateTime,
-        created: new Date()
-    });
+    try {
+        await addDoc(collection(db, "bookings"), {
+            service, name, phone, pickup, drop, dateTime,
+            created: new Date()
+        });
 
-    const message = `New Booking:%0AName: ${name}%0APhone: ${phone}%0APickup: ${pickup}%0ADrop: ${drop}%0ADate & Time: ${dateTime}`;
-    window.open(`https://wa.me/918618182400?text=${message}`, "_blank");
+        const message = `New Booking:%0AService: ${service}%0AName: ${name}%0APhone: ${phone}%0APickup: ${pickup}%0ADrop: ${drop}%0ADate & Time: ${dateTime}`;
+        window.open(`https://wa.me/918618182400?text=${message}`, "_blank");
 
-    alert("Booking Submitted Successfully!");
+        alert("Booking Submitted Successfully!");
+        document.getElementById("bookingForm").reset();
+    } catch (error) {
+        alert("Error submitting booking. Check Firestore rules.");
+        console.error(error);
+    }
 });
 </script>
 
